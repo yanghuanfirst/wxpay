@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="jsapi.php" method="post">
+	<input type="text"  name="total_fee"/>
+	<input type="button"  onclick="callpay()" value="提交"/>
+</form>
+<script src="jquery.min.js"></script>
+<script>
+function jsApiCall(data)
+{
+	
+	WeixinJSBridge.invoke(
+		'getBrandWCPayRequest',
+		data,
+		function(res){
+			WeixinJSBridge.log(res.err_msg);
+			alert(res.err_code+res.err_desc+res.err_msg);
+		}
+	);
+}
+//jsapi支付，必须在线上测试才行,支付目录，支付域名等都必须要微信公众号后台设置，不然没有权限吊起支付
+function callpay()
+{
+	$.ajax({
+		url:'jsapi.php',
+		type:"get",
+		dataType:'json',
+		success:function(res)
+		{
+		 	if (typeof WeixinJSBridge == "undefined"){
+	 	    if( document.addEventListener ){
+	 	        document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+	 	    }else if (document.attachEvent){
+	 	        document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
+	 	        document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+	 	    }
+	 	}else{
+	 	    jsApiCall(res);
+	 	}
+			
+		}
+	})
+	
+// 	if (typeof WeixinJSBridge == "undefined"){
+// 	    if( document.addEventListener ){
+// 	        document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+// 	    }else if (document.attachEvent){
+// 	        document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
+// 	        document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+// 	    }
+// 	}else{
+// 	    jsApiCall();
+// 	}
+}
+</script>
+</body>
+</html>
